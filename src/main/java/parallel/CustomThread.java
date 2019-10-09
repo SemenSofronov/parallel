@@ -1,52 +1,36 @@
 package parallel;
 
-import java.io.*;
-
 /**
  * @author sofronov
  * Created: 08.10.2019
  */
 public class CustomThread extends Thread {
-    private Thread t;
+    private Thread thread;
     private String threadName;
-    private Integer result;
+    private Counter counter;
 
-    CustomThread(String threadName, Integer result) {
+    CustomThread(String threadName, Counter counter) {
         this.threadName = threadName;
-        this.result = result;
+        this.counter = counter;
+    }
+
+    @Override
+    public void start() {
+        System.out.println("Thread " + threadName + " is started.");
+        if (thread == null) {
+            thread = new Thread(this, threadName);
+            thread.start();
+        }
     }
 
     @Override
     public void run() {
-        if (t == null) {
-            t = new Thread(this);
-        }
+        System.out.println("Thread " + threadName + " is running...");
+        counter.displayCounter(threadName);
+        System.out.println("Leaving " + threadName + " thread...");
+    }
 
-        try {
-            synchronized (this) {
-                while()
-                BufferedReader br = new BufferedReader(new FileReader("output.txt"));
-                String line = br.readLine();
-
-                FileWriter fw = new FileWriter("output.txt");
-                Integer previousValue = Integer.valueOf(line);
-
-                if (previousValue >= result) {
-                    this.interrupt();
-                }
-                Integer newValue = previousValue + 1;
-
-                System.out.println("previous value : " + previousValue + " new value : " + newValue + "thread name : " + threadName);
-                fw.write(newValue);
-
-                fw.flush();
-                fw.close();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("File does not exists!");
-        }
-
+    public Thread getThread() {
+        return thread;
     }
 }
